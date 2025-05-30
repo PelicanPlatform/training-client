@@ -15,7 +15,7 @@ git clone https://github.com/PelicanPlatform/training-client.git
 To clone a different training branch, or the main branch, use
 
 ```
-git clone -b name-of-nondefault-branch https://github.com/PelicanPlatform/training-origin.git
+git clone -b name-of-nondefault-branch https://github.com/PelicanPlatform/training-client.git
 ```
 
 or you can clone and then checkout the specific branch
