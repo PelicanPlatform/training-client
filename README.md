@@ -84,14 +84,14 @@ representing an evergrowing list of "open science" communities.
 Any US-based academic, government, or non-profit institution may connect their object store to the OSDF;
 this includes non-public data, so long as it is not highly regulated or sensitive (such as PII or HIPAA data).
 
-Once a data repository is connected to the OSDF, its contents are easily accessible via the Pelican Clients that are the subject of this tutorial.[^1]
+Once a data repository is connected to the OSDF, its contents are easily accessible via the Pelican Clients that are the subject of this tutorial.\*
 Every object accessible via the OSDF has a corresponding Pelican URL that exists within the single, overarching namespace of the OSDF.
 This enables you, the user, to access any object in the OSDF by providing its Pelican URL, 
 **without needing to know anything about the type of storage used to host the data**.
 That is, the commands to interact with objects via Pelican are always the same, 
 regardless of whether the data lives on POSIX, S3, or some other storage system.
 
-[^1]: This is technically true of any Pelican Federation; the OSDF is simply an established instance of such a Federation.
+\**This is technically true of any Pelican Federation; the OSDF is simply an established instance of such a Federation.*
 
 ### Anatomy of a Pelican URL
 
