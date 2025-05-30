@@ -63,7 +63,35 @@ First, follow the instructions below; we'll go into more detail later.
 
 ## What did you do? (An introduction to the Pelican Platform)
 
+In practice, by following the above instructions, you:
+
+1. Found a data repository available via the OSDF
+2. Found the Pelican URL for that data repository
+3. Downloaded the corresponding object using Pelican
+
+We'll go into more detail on each of these points to give you an introduction to the Pelican Platform.
+
 ### Exploring the OSDF
+
+The Open Science Data Federation (OSDF) is the flagship instance of the Pelican Platform and 
+serves to connect the United State's scientific data repositories to computing infrastructure.
+The OSDF itself originated from the need for large-scale data movement to support distributed high throughput computing systems like the OSPool.
+This eventually gave rise to the Pelican Platform, a standalone software suite to run systems like the OSDF.
+
+With the development of Pelican, it is now even easier to connect data repositories to the OSDF. 
+The webpage you visited ([osg-htc.org/services/osdf/data](http://osg-htc.org/services/osdf/data)) lists the data repositories available via the OSDF,
+representing an evergrowing list of "open science" communities.
+Any US-based academic, government, or non-profit institution may connect their object store to the OSDF;
+this includes non-public data, so long as it is not highly regulated or sensitive (such as PII or HIPAA data).
+
+Once a data repository is connected to the OSDF, its contents are easily accessible via the Pelican Clients that are the subject of this tutorial.[^1]
+Every object accessible via the OSDF has a corresponding Pelican URL that exists within the single, overarching namespace of the OSDF.
+This enables you, the user, to access any object in the OSDF by providing its Pelican URL, 
+**without needing to know anything about the type of storage used to host the data**.
+That is, the commands to interact with objects via Pelican are always the same, 
+regardless of whether the data lives on POSIX, S3, or some other storage system.
+
+[^1]: This is technically true of any Pelican Federation; the OSDF is simply an established instance of such a Federation.
 
 ### Anatomy of a Pelican URL
 
