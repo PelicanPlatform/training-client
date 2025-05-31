@@ -109,7 +109,7 @@ There are four components to a Pelican URL:
 * The "namespace prefix"
 * The "object name"
 
-These components are combined into a single string of the form
+These components are combined into a single string to form the Pelican URL:
 
 ```html
 <protocol>://<federation_URL>/<namespace_prefix>/<object_name>
@@ -129,6 +129,12 @@ Among other things, this means Pelican can leverage the ubiquitous internet infr
 > A motivated programmer who understands HTTP could develop their own Client to interact with a Pelican Federation,
 > much in the same way that they could develop a custom browser to interact with an `https://` website!
 
+The Pelican URL is now
+
+```html
+pelican://<federation_URL>/<namespace_prefix>/<object_name>
+```
+
 #### The discovery URL
 
 In the same way that a website is uniquely identified by its domain name, 
@@ -142,6 +148,69 @@ For example, the discovery URL for the OSDF is `osg-htc.org`, which behind-the-s
 > The answer is that a website for a Pelican Federation needs to provide a specific webpage 
 > that Pelican knows to look for, as part of the standards set by the `pelican://` protocol.
 > For more information, see the [Core Concepts](https://docs.pelicanplatform.org/about-pelican/core-concepts#central-services) page of the Pelican documentation.
+
+The Pelican URL is now
+
+```html
+pelican://osg-htc.org/<namespace_prefix>/<object_name>
+```
+
+#### The namespace prefix
+
+Within a Pelican Federation, objects are grouped by a "namespace prefix",
+which is often shortened to just a "namespace". 
+When a data repository is connected to a Federation, 
+the data provider must register a corresponding namespace prefix.
+This prefix is then used in the Pelican URL as a way to communicate how to find corresponding objects via the Federation.
+
+The person or organization that registered the namespace prefix has control over who can access the data repository via that namespace.
+They also "own" all further namespace prefixes that share a common root.
+For example, only the owner of the namespace prefix `ospool` has the ability to register the prefix `ospool/ap40`, `ospool/ap20`, etc.
+
+> [!TIP]
+> While the string for a namespace prefix can contain slashes `/`, each namespace prefix is distinct.
+> That is, one server may provide the objects in the `ospool` namespace while another server provides the objects in the `ospool/ap40` namespace.
+> The server providing `ospool/ap40`, however, must prove that it is owned by the same entity as the server providing `ospool`.
+
+> [!INFO]
+> The relationship between the data provider and a namespace prefix within a Pelican Federation is established by registering a public-private keypair. 
+> Any service claiming to provide the data repository corresponding to that namespace prefix must repeatedly prove that it holds the provider's half of the keypair.
+>
+> * For more information on namespace prefixes, see the [Core Concepts](https://docs.pelicanplatform.org/about-pelican/core-concepts#namespace-or-federation-prefixes) page.
+> * For more information on registering a namespace prefix, see the [Serving an Origin](https://docs.pelicanplatform.org/federating-your-data/origin#federation-namespace-prefix-registration) page.
+
+For the RouteViews example used in the [Quickstart](#quickstart), the namespace prefix is just `routeviews`.
+The Pelican URL is now
+
+```html
+pelican://osg-htc.org/routeviews/<object_name>
+```
+
+#### The object name
+
+The final component to the Pelican URL is the object name.
+The object name corresponds to a location within the data repository corresponding to a particular namespace. 
+The object name could map to a location in a filesystem, or an object within a particular S3 bucket.
+This mapping is handled by the Pelican service (the Origin) that connects the data repository to the Federation.
+
+> [!WARNING]
+> The data provider may require additional authentication to access individual objects within a namespace, 
+> beyond that specified to access the namespace in the first place.
+> In that case, you should communicate with the data provider to learn of the access model.
+
+For the RouteViews example used in the [Quickstart](#quickstart), the object name is `chicago/route-views.chicago/bgpdata/2025.03/RIBS/rib.20250319.0400.bz2`.
+The Pelican URL is now
+
+```html
+pelican://osg-htc.org/routeviews/chicago/route-views.chicago/bgpdata/2025.03/RIBS/rib.20250319.0400.bz2
+```
+
+> [!TIP]
+> For most users, there's no need to identify where the namespace prefix ends and the object name begins.
+>
+> For the RouteViews example, instead of `routeviews` and `chicago/route-views.chicago/bgpdata/2025.03/RIBS/rib.20250319.0400.bz2`,
+> it just as easily could have been `routeviews/chicago/route-views.chicago` and `bgpdata/2025.03/RIBS/rib.20250319.0400.bz2` for the
+> namespace prefix and object name!
 
 ### Getting an object using a Pelican URL
 
