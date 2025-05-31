@@ -84,16 +84,64 @@ representing an evergrowing list of "open science" communities.
 Any US-based academic, government, or non-profit institution may connect their object store to the OSDF;
 this includes non-public data, so long as it is not highly regulated or sensitive (such as PII or HIPAA data).
 
+> [!IMPORTANT]
+> For more information on the OSDF, including next steps for connecting your open science data repository to the OSDF, 
+> see [osg-htc.org/services/osdf](https://osg-htc.org/services/osdf).
+
 Once a data repository is connected to the OSDF, its contents are easily accessible via the Pelican Clients that are the subject of this tutorial.\*
 Every object accessible via the OSDF has a corresponding Pelican URL that exists within the single, overarching namespace of the OSDF.
 This enables you, the user, to access any object in the OSDF by providing its Pelican URL, 
 **without needing to know anything about the type of storage used to host the data**.
 That is, the commands to interact with objects via Pelican are always the same, 
-regardless of whether the data lives on POSIX, S3, or some other storage system.
+regardless of whether the data lives on POSIX, S3, or some other storage system!
 
 \**This is technically true of any Pelican Federation; the OSDF is simply an established instance of such a Federation.*
 
 ### Anatomy of a Pelican URL
+
+In the [Quickstart](#quickstart), the command you ran specified the location of the desired object using a Pelican URL.
+The Pelican URL is a unique address to any object within the single namespace provided by a Pelican Federation.
+
+There are four components to a Pelican URL:
+
+* The "protocol"
+* The "discovery URL"
+* The "namespace prefix"
+* The "object name"
+
+These components are combined into a single string of the form
+
+```html
+<protocol>://<federation_URL>/<namespace_prefix>/<object_name>
+```
+
+By examining each of these components, we can build up an understanding of how Pelican is structured.
+
+#### The protocol
+
+In the same way that your browser uses the `https://` protocol to interact with a website, 
+Pelican uses the `pelican://` protocol to interact with a Pelican Federation.
+The `pelican://` protocol is built upon the HTTP protocol and extends it with a set of metadata lookups. 
+Among other things, this means Pelican can leverage the ubiquitous internet infrastructure 
+- any internet-capable device can theoretically use Pelican!
+
+> [!NOTE]
+> A motivated programmer who understands HTTP could develop their own Client to interact with a Pelican Federation,
+> much in the same way that they could develop a custom browser to interact with an `https://` website!
+
+#### The discovery URL
+
+In the same way that a website is uniquely identified by its domain name, 
+a Pelican Federation is uniquely identified by its discovery URL. 
+To interact with a Pelican Federation, the Client needs to know the web service that it should connect to.
+
+For example, the discovery URL for the OSDF is `osg-htc.org`, which behind-the-scenes corresponds to `https://osg-htc.org`.
+
+> [!INFO]
+> But `https://osg-htc.org` is already a website, so how does the OSDF work?
+> The answer is that a website for a Pelican Federation needs to provide a specific webpage 
+> that Pelican knows to look for, as part of the standards set by the `pelican://` protocol.
+> For more information, see the [Core Concepts](https://docs.pelicanplatform.org/about-pelican/core-concepts#central-services) page of the Pelican documentation.
 
 ### Getting an object using a Pelican URL
 
