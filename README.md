@@ -155,6 +155,19 @@ The Pelican URL is now
 pelican://osg-htc.org/<namespace_prefix>/<object_name>
 ```
 
+> [!TIP]
+> Because `osg-htc.org` is the discovery URL for Pelican's flagship instance, the OSDF,
+> most Pelican URLs begin with `pelican://osg-htc.org/`.
+> To make the URL faster to type, Pelican has a built-in shortcut for this phrase:
+> `osdf:///`.
+> That is, the following are equivalent:
+> 
+> ```html
+> pelican://osg-htc.org/<namespace_prefix>/<object_name>
+> osdf:///<namespace_prefix>/<object_name>
+> ```
+>
+
 #### The namespace prefix
 
 Within a Pelican Federation, objects are grouped by a "namespace prefix",
