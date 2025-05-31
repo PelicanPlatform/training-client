@@ -227,6 +227,94 @@ pelican://osg-htc.org/routeviews/chicago/route-views.chicago/bgpdata/2025.03/RIB
 
 ### Getting an object using a Pelican URL
 
+Before we discuss the details of how to use the Pelican Clients to interact with an object via its Pelican URL, 
+we need to discuss the mechanics of how Pelican transfers an object via a Federation.
+We'll focus on the "get" operation, as that is the most frequently used operation by Pelican Clients.
+To do so, we need to introduce a couple more components of a Pelican Federation.
+
+* **Origin**: The Origin service connects a data repository to a Pelican Federation.
+  Controlled by the data provider, the Origin maps the objects into a corresponding namespace prefix
+  and defines the necessary permissions required to access the objects.
+
+* **Central Services**: These services keep track of the namespaces and the corresponding Origins available
+  within a Pelican Federation. When a Pelican component wants to interact with a namespace, 
+  it asks the Central Services for the Origin that it should connect to.
+
+* **Cache**: The Cache server is used as the middle-man for most object transfers within a Federation.
+  It keeps temporary copies of the most recently transferred objects and those objects can be downloaded
+  by other Pelican components.
+  Importantly, the Cache respects the access permissions as defined by the namespace for that Origin.
+  ***Only an entity with permission to access an object at the Origin can access the object at the Cache!***
+  
+#### Connecting to a Cache
+
+When a Client wants to get an object, it must first connect to a Cache.
+
+1. The Client asks the Central Services which Cache it should connect to.
+2. The Central Services gives the Client a list of three Caches that are capable of obtaining objects from the corresponding namespace.
+3. The Client then requests the object from one of the Caches on the list.
+4. If that Cache cannot provide the object, the Client continues through the list until it obtains the object.
+5. If the Client does not obtain the object, it errors out.
+
+When the Client requests an object from a Cache, then either a) the Cache has the object, or b) the Cache does not have the object.
+
+#### a) The Cache has the object
+
+If the Cache has a copy of an object requested by a Client, then
+
+1. The Cache first checks to make sure that the Client satisfies the requirements for interacting with that object.
+   (These requirements are copied from the Origin through which the Cache originally copied said object.)
+2. If the Client satisfies the requirements, the Cache grants the Client's request to download the object.
+3. If not, the Cache rejects the Client's request.
+
+#### b) The Cache does not have the object
+
+If the Cache does not have a copy of an object requested by a Client, then
+
+1. The Cache asks the Central Services for the Origin corresponding to the requested object's namespace.
+2. The Central Services redirects the Cache to the proper Origin.
+3. The Cache requests the object via the Origin, on behalf of the Client.
+4. If the Client satisfies the Origin's requirements, the Cache downloads a copy of the object and subsequently the Client downloads the object from the cache.
+5. If the Client does not satisfy the Origin's requirements, the Cache's request is rejected and in turn the Cache rejects the Client's request.
+
+#### The importance of caching
+
+At this point, you may be wondering "why should I care about any of this?".
+And for most users of the Pelican Clients, you don't really need to know the implementation of how Pelican delivers an object.
+
+What you *do* need to know, however, are the consequences of the implementation.
+
+* **Pelican assumes that objects *do not change*!**
+
+  For the caching system described above to work properly, the object must be the same at the Cache as it is in data repository connected to the Origin.
+  Consider if the object accessible via the Origin changes: 
+  a Client requesting that object may get an old copy from the Cache,
+  or it may get the new version via the Origin.
+
+  > [!CAUTION]
+  > Because of some technical details, the Client may even get a Frankenstein mix of the old and new version. 😬
+  > If you make a change to an object in the repository connected to an Origin, you should also change its name!
+
+* **Requirements for accessing objects are respected *everywhere* in the Federation**
+
+  When a Cache downloads an object via an Origin, it also gets a copy of the Origin's requirements for accessing that object.
+  That way, if the Origin would reject a Client's request, so to will the Cache reject that same Client's request.
+  *The data provider does not lose control over their data!*
+
+* **Caches help prevent the data storage from being overwhelmed**
+
+  Because it is expensive to store open science data repositories on high-performance hardware,
+  most open science storage systems can be overwhelmed by large transfers, many transfers, and especially by many large transfers.
+  Often the data provider sets limits on the amount and frequency of data transfers from their system.
+  By using Caches, transfers via a Pelican Federation reduce the amount and frequency of data transfers,
+  making it easier for researchers to access the data, especially for high throughput workflows.
+
+> [!IMPORTANT]
+> The OSDF maintains over 30 Caches geographically distributed across North America and Europe, 
+> most of which are high-performance servers located on the Internet2 backbone.
+> This extensive caching is a major incentive for data providers to connect their open science data repositories to the OSDF.
+> For more information on connecting data to the OSDF, see [osg-htc.org/services/osdf](https://osg-htc.org/services/osdf).
+
 ## Accessing data using the Pelican Clients
 
 ### Basic Client actions
