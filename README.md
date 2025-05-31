@@ -291,9 +291,9 @@ What you *do* need to know, however, are the consequences of the implementation.
   a Client requesting that object may get an old copy from the Cache,
   or it may get the new version via the Origin.
 
-  > [!CAUTION]
-  > Because of some technical details, the Client may even get a Frankenstein mix of the old and new version. 😬
-  > If you make a change to an object in the repository connected to an Origin, you should also change its name!
+> [!CAUTION]
+> Because of some technical details, the Client may even get a Frankenstein mix of the old and new version. 😬
+> If you make a change to an object in the repository connected to an Origin, you should also change its name!
 
 * **Requirements for accessing objects are respected *everywhere* in the Federation**
 
