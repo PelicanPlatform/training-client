@@ -143,7 +143,7 @@ To interact with a Pelican Federation, the Client needs to know the web service 
 
 For example, the discovery URL for the OSDF is `osg-htc.org`, which behind-the-scenes corresponds to `https://osg-htc.org`.
 
-> [!INFO]
+> [!NOTE]
 > But `https://osg-htc.org` is already a website, so how does the OSDF work?
 > The answer is that a website for a Pelican Federation needs to provide a specific webpage 
 > that Pelican knows to look for, as part of the standards set by the `pelican://` protocol.
@@ -172,7 +172,7 @@ For example, only the owner of the namespace prefix `ospool` has the ability to 
 > That is, one server may provide the objects in the `ospool` namespace while another server provides the objects in the `ospool/ap40` namespace.
 > The server providing `ospool/ap40`, however, must prove that it is owned by the same entity as the server providing `ospool`.
 
-> [!INFO]
+> [!NOTE]
 > The relationship between the data provider and a namespace prefix within a Pelican Federation is established by registering a public-private keypair. 
 > Any service claiming to provide the data repository corresponding to that namespace prefix must repeatedly prove that it holds the provider's half of the keypair.
 >
