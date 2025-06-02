@@ -587,11 +587,91 @@ If you just want the names of the objects:
 
 #### Getting objects with PelicanFS
 
+Let's download the `hello-world.txt` object using PelicanFS.
+To do so, you'll use the `get_file` method:
 
+```python
+pelfs.get_file('/pelicanplatform/test/hello-world.txt', 'hello-world.txt')
+```
+
+This will download the object and save it as the file `hello-world.txt` in the local directory.
+
+> [!TIP]
+> Normally, the method you would use is the `get` method, not the `get_file` method,
+> but there is currently a bug that prevents the `get` method from working correctly.
+
+Once the object is downloaded, you can open it as usual:
+
+```python
+with open('hello-world.txt', 'r') as f:
+    my_file = f.read()
+
+print(my_file)
+```
+
+BUT, an advantage of the `fsspec` implementation is that you don't need a discrete download step!
+You can combine the above steps using the `open` method of the `PelicanFileSystem` object:
+
+```python
+with pelfs.open('/pelicanplatform/test/hello-world.txt', 'r') as f:
+    direct_read = f.read()
+
+print(direct_read)
+```
+
+Behind the scenes, `pelicanfs` will download the object as needed, and `fsspec` will choose an appropriate method for storing it locally.
 
 #### Automated use of `pelicanfs`
 
+Many Python packages work with `fsspec` automatically, which in turn means that they can work with `pelicanfs` automatically.
+That means that you don't necessarily have to manually invoke `pelicanfs` to use it!
+
+As an example, let's read in a csv file from a NOAA dataset available via the OSDF from the AWS OpenData repository.
+(More on this dataset in the [Accessing data using Pelican and HTCondor](#accessing-data-using-pelican-and-htcondor).)
+
+To see how this works, **first exit and restart your Python console**.
+Then import the Pandas package:
+
+```python
+import pandas as pd
+```
+
+Next, you'll need the Pelican URL. 
+The Pelican URL for this csv file is
+
+```python
+station_URL='osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv'
+```
+
+Now, you can load this data file into a Pandas dataframe using this URL and the usual Pandas method:
+
+```python
+station_df = pd.read_csv(station_URL, low_memory=False)
+```
+
+The data is automatically downloaded using the `pelicanfs` package, even though you didn't import it!
+To confirm the data is there, use the `head` method on the new dataframe:
+
+```python
+station_df.head()
+```
+
+You should see the following:
+
+```python
+>>> station_df.head()
+            ID      DATE ELEMENT  DATA_VALUE M_FLAG Q_FLAG S_FLAG  OBS_TIME
+0  USW00014837  19391001    TMAX         194    NaN    NaN      X       NaN
+1  USW00014837  19391002    TMAX         211    NaN    NaN      X       NaN
+2  USW00014837  19391003    TMAX         233    NaN    NaN      X       NaN
+3  USW00014837  19391004    TMAX         272    NaN    NaN      X       NaN
+4  USW00014837  19391005    TMAX         211    NaN    NaN      X       NaN
+```
+
 ## Accessing data using Pelican and HTCondor
+
+The real power of Pelican is the ability to provide data to high throughput computing.
+To demonstrate this, we'll work with the [NOAA Global Historical Climatology Network](https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.ncdc:C00861/html).
 
 ## Concluding remarks
 
