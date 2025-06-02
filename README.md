@@ -171,6 +171,7 @@ pelican://osg-htc.org/<namespace_prefix>/<object_name>
 > osdf:///<namespace_prefix>/<object_name>
 > ```
 >
+> Anywhere you see `osdf://`, you can substitute it for `pelican://osg-htc.org` and everything will work the same!
 
 #### The namespace prefix
 
@@ -394,33 +395,25 @@ pelican object ls <Pelican URL>
 
 Pelican maintains a test namespace within the OSDF under the namespace `pelicanplatform/test`.
 Since the Federation URL for the OSDF is `osg-htc.org`, that leads to the Pelican URL `pelican://osg-htc.org/pelicanplatform/test`.
+To make things easier to read, let's use the `osdf://` substitution to shorten the URL to `osdf:///pelicanplatform/test`.
 
 The command to list the objects accessible via this Pelican URL is
 
 ```
-pelican object ls pelican://osg-htc.org/pelicanplatform/test
+pelican object ls osdf:///pelicanplatform/test
 ```
 
 The output of running this command should look like this:
 
 ```
-$ pelican object ls pelican://osg-htc.org/pelicanplatform/test
+$ pelican object ls osdf:///pelicanplatform/test
 hello-world.txt.md5          hello-world.txt
 ```
-
-> [!TIP]
-> Instead of using the full OSDF Pelican URL, you can use the `osdf://` shorthand, like this:
-> 
-> ```
-> pelican object ls osdf:///pelicanplatform/test
-> ```
->
-> This is exactly equivalent to the command used above.
 
 For additional information, you include the `-l`/`--long` flag:
 
 ```
-pelican object ls --long pelican://osg-htc.org/pelicanplatform/test
+pelican object ls --long osdf:///pelicanplatform/test
 ```
 
 which should show something like
@@ -429,15 +422,6 @@ which should show something like
 /pelicanplatform/test/hello-world.txt.md5          50          2025-01-21 20:59:49
 /pelicanplatform/test/hello-world.txt              76          2025-01-21 20:57:01
 ```
-
-> [!TIP]
-> Again, you can use the `osdf://` shorthand for specifying the Pelican URL:
->
-> ```
-> pelican object ls --long osdf:///pelicanplatform/test
-> ```
->
-> In general, anywhere you see `pelican://osg-htc.org/` you can replace it with `osdf:///`!
 
 #### Getting objects with the Pelican CLI
 
@@ -451,7 +435,7 @@ In the listing of the Pelican test namespace, we saw the object `hello-world.txt
 Let's download that object to the current directory:
 
 ```
-pelican object get pelican://osg-htc.org/pelicanplatform/test/hello-world.txt ./hello-world.txt
+pelican object get osdf:///pelicanplatform/test/hello-world.txt ./hello-world.txt
 ```
 
 If the request to download the object is granted, the Client will start downloading the object.
@@ -477,7 +461,7 @@ For this case, you can use the `?recursive` query to tell Pelican to act recursi
 For example,
 
 ```
-pelican object get pelican://osg-htc.org/pelicanplatform/test?recursive ./
+pelican object get osdf:///pelicanplatform/test?recursive ./
 ```
 
 will download the objects of the `/pelicanplatform/test` namespace into a local directory named `test` (the basename of the Pelican URL).
@@ -503,7 +487,7 @@ If you want to see what that looks like in practice, you can run any of the abov
 For example:
 
 ```
-pelican object get --debug pelican://osg-htc.org/pelicanplatform/test/hello-world.txt ./
+pelican object get --debug osdf:///pelicanplatform/test/hello-world.txt ./
 ```
 
 The output of this command will include details about the information that the Client is requesting, 
@@ -554,6 +538,10 @@ For this example, we'll continue using the OSDF Federation, which has the Federa
 ```python
 pelfs = PelicanFileSystem('pelican://osg-htc.org')
 ```
+
+> [!TIP]
+> Here you need to use the full federation address and *not* the `osdf://` shorthand.
+> This may be changed in a future release of PelicanFS.
 
 The `pelfs` object has methods for interacting with objects via the Federation.
 Usage typically looks like
@@ -695,7 +683,7 @@ From the [README](https://docs.opendata.aws/noaa-ghcn-pds/readme.html):
 The GHCN data set is available via Amazon's OpenData repository, at [https://noaa-ghcn-pds.s3.amazonaws.com/](https://noaa-ghcn-pds.s3.amazonaws.com/).
 The OpenData repository is already connected to the OSDF under the namespace `aws-opendata`. 
 With a little digging, we find that the NOAA dataset is accessible via `us-east-1/noaa-ghcn-pds`.
-Altogether, our starting Pelican URL is `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds`.
+Altogether, our starting Pelican URL is `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds`.
 
 Next, we need an object to work with. 
 Normally, we would use the `ls` functionality discussed above to see the objects accessible via this namespace, but listings are not enabled for this namespace.
@@ -703,10 +691,10 @@ Instead, you can browse the [AWS index link](https://noaa-ghcn-pds.s3.amazonaws.
 
 In the top level of the namespace is a `ghcnd-stations.txt` file that serves as an index of the station names, locations, and identifiers.
 We can use this file to identify the stations of interest.
-The Pelican URL for this object is `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt`.
+The Pelican URL for this object is `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt`.
 
 Further exploration of the AWS index shows that the data for individual stations follow the naming of `csv/by_station/<stationID>.csv`,
-so the Pelican URLs for indvidual csv files are `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/<stationID>.csv`.
+so the Pelican URLs for indvidual csv files are `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/<stationID>.csv`.
 
 ### Exploring the data
 
@@ -715,7 +703,7 @@ For this portion, we'll use the Pelican CLI to explore the data, but in principl
 First, download a copy of the index file:
 
 ```
-pelican object get pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt ./ghcnd-stations.txt
+pelican object get osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt ./ghcnd-stations.txt
 ```
 
 Take a peak at the contents of the file:
@@ -742,7 +730,7 @@ AFM00040990  31.5000   65.8500 1010.0    KANDAHAR AIRPORT                       
 
 The first column of this file is the station ID that is used as the name of the csv file. 
 For example, if the station ID is `USW00014837`, the name of the csv file is `USW00014837.csv`.
-In turn, that leads to a Pelican URL of `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv`.
+In turn, that leads to a Pelican URL of `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv`.
 
 Next, download one of these files. 
 What is the command you should use?
@@ -756,7 +744,7 @@ will generate an image of the distribution of high and low temperatures across t
 Download the csv file for a station using Pelican, for example:
 
 ```
-pelican object get pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv ./
+pelican object get osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv ./
 ```
 
 Then run the script using this command:
@@ -812,7 +800,7 @@ If you want HTCondor to transfer the file via Pelican directly from the OpenData
 you replace the filename with it's full Pelican URL:
 
 ```
-transfer_input_files = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv
+transfer_input_files = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv
 ```
 
 The component responsible for doing this transfer behind the scene is the Pelican Plugin.
@@ -820,16 +808,16 @@ The component responsible for doing this transfer behind the scene is the Pelica
 To make things easier to read, you can pull out the bulk of the Pelican URL into a separate variable, like so:
 
 ```
-PELICAN_PREFIX = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
-transfer_input_files = $(PELICAN_PREFIX)/USW00014837.csv
+OSDF_PREFIX = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
+transfer_input_files = $(OSDF_PREFIX)/USW00014837.csv
 ```
 
 You can also pull out the unique station ID as it's own variable:
 
 ```
-PELICAN_PREFIX = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
+OSDF_PREFIX = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
 STATION_ID = USW00014837
-transfer_input_files = $(PELICAN_PREFIX)/$(STATION_ID).csv
+transfer_input_files = $(OSDF_PREFIX)/$(STATION_ID).csv
 ```
 
 This is particularly useful since there are other files (the output image, standard output and standard error) where it is useful to have the station ID in the name.
