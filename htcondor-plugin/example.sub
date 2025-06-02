@@ -1,20 +1,21 @@
 container_image = osdf:///ospool/uc-shared/public/OSG-Staff/training/python.sif
 
 executable   = example.py
-arguments    = $(station_id)
+arguments    = $(STATION_ID)
 
 OSDF_PREFIX  = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station
+transfer_input_files = my_functions.py, $(OSDF_PREFIX)/$(STATION_ID).csv
 
 should_transfer_files = YES
-transfer_input_files = my_functions.py, $(OSDF_PREFIX)/$(station_id).csv
-transfer_output_remaps = "$(station_id).png=results/$(station_id).png"
+transfer_output_remaps = "$(STATION_ID).png=results/$(STATION_ID).png"
 
 log          = logs/example.$(Cluster).log
-output       = logs/$(station_id).out
-error        = logs/$(station_id).err
+output       = logs/$(STATION_ID).out
+error        = logs/$(STATION_ID).err
 
 request_cpus   = 1
 request_memory = 2GB
 request_disk   = 2GB
 
-queue station_id from station_list.txt
+queue STATION_ID from station_list.txt
+
