@@ -7,7 +7,7 @@ Clients covered:
 * [PelicanFS](https://github.com/PelicanPlatform/pelicanfs)
 * [HTCondor Plugin](https://htcondor.readthedocs.io/en/latest/users-manual/file-transfer.html#file-transfer-using-a-url)
 
-**Accompanying Slides**: [link TBD]
+**Accompanying Slides**: [go.wisc.edu/6k6ki5](https://go.wisc.edu/6k6ki5)
 
 ## Requirements
 
