@@ -17,7 +17,10 @@ An internet connection and a web browser!
 
 For this tutorial, we recommend that you use a Guest [OSPool Notebook](https://portal.osg-htc.org/documentation/overview/test-drive-ospool/) as it satisfies the necessary requirements.
 Abbreviated instructions are provided below.
-Alternatively, follow the instructions in [Appendix: Manual Setup](#appendix-manual-setup) to setup a device of your choice.
+
+In principle, you can install the necessary programs on your own device to complete the exercises.
+If you are interested in doing that, we recommend that you first go through the tutorial using the OSPool Notebook as recommended,
+then repeat the tutorial after installing the necessary programs on the device of your choice.
 
 ### Log in to a Guest OSPool Notebook
 
@@ -29,7 +32,8 @@ Screenshots of this process are included in the Accompanying Slides.
 4. Sign in to your identity provider.
 5. If given a choice of "Server Options", select "Guest Account: Explore OSPool Notebooks", then click the "Start" button.
 6. Wait for server to start. Your browser should load a JupyterLab instance and display a "Launcher" tab.
-7. Under the "Other" category, launch the "Terminal" tab.
+7. In the file navigation pane on the left-hand side, double click on the `training-client` directory to navigate to it.
+8. In the "Launcher" tab, under the "Other" category, double click the "Terminal" box to launch a shell console.
 
 ## Quickstart
 
@@ -671,8 +675,236 @@ You should see the following:
 ## Accessing data using Pelican and HTCondor
 
 The real power of Pelican is the ability to provide data to high throughput computing.
-To demonstrate this, we'll work with the [NOAA Global Historical Climatology Network](https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.ncdc:C00861/html).
+To demonstrate this, we'll use HTCondor to do a rudimentary analysis of multiple objects of the [NOAA Global Historical Climatology Network](https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.ncdc:C00861/html) dataset.
+
+Before proceeding, move into the `htcondor-plugin` directory.
+If you still have your terminal window open, you will need to enter
+
+```bash
+cd htcondor-plugin
+```
+
+### About the data
+
+From the [README](https://docs.opendata.aws/noaa-ghcn-pds/readme.html):
+
+> GHCN-Daily is a dataset that contains daily observations over global land areas.
+> It contains station-based measurements from land-based stations worldwide, about two thirds of which are for precipitation measurements only (Menne et al., 2012).
+> GHCN-Daily is a composite of climate records from numerous sources that were merged together and subjected to a common suite of quality assurance reviews (Durre et al., 2010).
+
+The GHCN data set is available via Amazon's OpenData repository, at [https://noaa-ghcn-pds.s3.amazonaws.com/](https://noaa-ghcn-pds.s3.amazonaws.com/).
+The OpenData repository is already connected to the OSDF under the namespace `aws-opendata`. 
+With a little digging, we find that the NOAA dataset is accessible via `us-east-1/noaa-ghcn-pds`.
+Altogether, our starting Pelican URL is `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds`.
+
+Next, we need an object to work with. 
+Normally, we would use the `ls` functionality discussed above to see the objects accessible via this namespace, but listings are not enabled for this namespace.
+Instead, you can browse the [AWS index link](https://noaa-ghcn-pds.s3.amazonaws.com/) to see the files available.
+
+In the top level of the namespace is a `ghcnd-stations.txt` file that serves as an index of the station names, locations, and identifiers.
+We can use this file to identify the stations of interest.
+The Pelican URL for this object is `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt`.
+
+Further exploration of the AWS index shows that the data for individual stations follow the naming of `csv/by_station/<stationID>.csv`,
+so the Pelican URLs for indvidual csv files are `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/<stationID>.csv`.
+
+### Exploring the data
+
+For this portion, we'll use the Pelican CLI to explore the data, but in principle you can use the PelicanFS Client to accomplish the same thing.
+
+First, download a copy of the index file:
+
+```
+pelican object get pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt ./ghcnd-stations.txt
+```
+
+Take a peak at the contents of the file:
+
+```bash
+head ghcnd-stations.txt
+```
+
+You should see something like this:
+
+```
+$ head ghcnd-stations.txt
+ACW00011604  17.1167  -61.7833   10.1    ST JOHNS COOLIDGE FLD
+ACW00011647  17.1333  -61.7833   19.2    ST JOHNS
+AE000041196  25.3330   55.5170   34.0    SHARJAH INTER. AIRP            GSN     41196
+AEM00041194  25.2550   55.3640   10.4    DUBAI INTL                             41194
+AEM00041217  24.4330   54.6510   26.8    ABU DHABI INTL                         41217
+AEM00041218  24.2620   55.6090  264.9    AL AIN INTL                            41218
+AF000040930  35.3170   69.0170 3366.0    NORTH-SALANG                   GSN     40930
+AFM00040938  34.2100   62.2280  977.2    HERAT                                  40938
+AFM00040948  34.5660   69.2120 1791.3    KABUL INTL                             40948
+AFM00040990  31.5000   65.8500 1010.0    KANDAHAR AIRPORT                       40990
+```
+
+The first column of this file is the station ID that is used as the name of the csv file. 
+For example, if the station ID is `USW00014837`, the name of the csv file is `USW00014837.csv`.
+In turn, that leads to a Pelican URL of `pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv`.
+
+Next, download one of these files. 
+What is the command you should use?
+
+### A rudimentary climate analysis
+
+In the `htcondor-plugin` directory is the python script `example.py`. 
+This script takes a station ID as an argument and, assuming the corresponding csv file is present in the directory,
+will generate an image of the distribution of high and low temperatures across the meteorological seasons for that station.
+
+Download the csv file for a station using Pelican, for example:
+
+```
+pelican object get pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv ./
+```
+
+Then run the script using this command:
+
+```bash
+./example.py USW00014837
+```
+
+A `.png` file named with the station ID will be created.
+Use the Jupyter interface to view the image.
+
+### Scaling out
+
+Suppose that you want to run this analysis on **all** of the stations in the NOAA dataset.
+How many times would you need to run the `example.py` script?
+
+You can count the number of lines in the `ghcnd-stations.txt` file with
+
+```bash
+wc -l ghcnd-stations.txt
+```
+
+That's a lot of stations!
+Assuming you had already downloaded the entire dataset, and that each execution of `example.py` takes only 1 second to execute.
+Altogether, that amounts to 36 hours to get process the entire dataset.
+
+Imagine that you want to do a more complex analysis, where the execution of `example.py` for each station takes 1 hour to run.
+Now instead of only 36 hours to process the dataset, it will take almost *15 years*!!
+
+The power of HTCondor and high throughput computing is the ability to place many individual calculations across many computers.
+Users of the OSPool and similar high throughput computing systems regularly run *thousands* of jobs at time. 
+That means after 1 hour of "real time", you could process 1,000 stations.
+At that rate, the more complex analysis would only take 5 **days**
+
+Let's assume that you have access to such a computing system.
+How do you get the data you need to process to each of those computers?
+
+Here is where the Pelican integration with HTCondor comes into play.
+
+### Scaling out with HTCondor and Pelican
+
+HTCondor comes with built-in Pelican integration in the form of the Pelican Plugin. 
+That allows for Pelican URLs to be declared as part of HTCondor's file transfer mechanisms.
+
+Let's start by considering a single job that needs the `USW00014837.csv` file as an input.
+If the file is in the same directory as the submit file, you can declare that transfer using
+
+```
+transfer_input_files = USW00014837.csv
+```
+
+If you want HTCondor to transfer the file via Pelican directly from the OpenData repository, 
+you replace the filename with it's full Pelican URL:
+
+```
+transfer_input_files = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv
+```
+
+The component responsible for doing this transfer behind the scene is the Pelican Plugin.
+
+To make things easier to read, you can pull out the bulk of the Pelican URL into a separate variable, like so:
+
+```
+PELICAN_PREFIX = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
+transfer_input_files = $(PELICAN_PREFIX)/USW00014837.csv
+```
+
+You can also pull out the unique station ID as it's own variable:
+
+```
+PELICAN_PREFIX = pelican://osg-htc.org/aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
+STATION_ID = USW00014837
+transfer_input_files = $(PELICAN_PREFIX)/$(STATION_ID).csv
+```
+
+This is particularly useful since there are other files (the output image, standard output and standard error) where it is useful to have the station ID in the name.
+
+The last step needed is to make the station ID change for each job.
+To do so, the value of `STATION_ID` needs to loop over a list of values.
+This is accomplished with HTCondor by the following `queue` statement:
+
+```
+queue STATION_ID from station_list.txt
+```
+
+The values of STATION_ID are stored in the file `station_list.txt` and one job will be created for each value.
+
+Take a look at the example submit file provided, `example.sub`, by opening it in the Jupyter interface or running
+
+```bash
+cat example.sub
+```
+
+There are additional aspects to the submit file not covered here, 
+but the important thing to understand is that each job will transfer its unique station data file and run the rudimentary analysis covered above.
+
+### Submitting a list of jobs
+
+All we need to do at this point is make the list of station IDs to analyze.
+To keep things simple, we'll only do 10 stations, instead of all 120,000.
+
+Run the following command to generate such a list:
+
+```bash
+ grep "USW00014837" -A 9 ghcnd-stations.txt | cut -d " " -f 1 > station_list.txt
+```
+
+The station list should look like this:
+
+```
+$ cat station_list.txt
+USW00014837
+USW00014838
+USW00014839
+USW00014840
+USW00014841
+USW00014842
+USW00014843
+USW00014844
+USW00014845
+USW00014846
+```
+
+Now submit these jobs to HTCondor using the command
+
+```
+condor_submit example.sub
+```
+
+This will submit ten jobs in total, one for each of the station IDs in the list.
+
+Monitor the progress of the jobs with
+
+```
+condor_watch_q
+```
+
+If everything goes well, the progress bar will eventually turn completely to green `#` symbols,
+and you should see the 10 image files in the `results` directory.
+
+> [!TIP]
+> The Plugin works with the query parameters, e.g., `?recursive` and `?pack`, discussed in an [earlier section](#getting-objects-recursively-with-the-pelican-cli).
+
+> [!IMPORTANT]
+> If you really do want run all 120,000 analyses, please don't use the OSPool Notebook to do so!
+> The OSPool Notebook can only run a handful of jobs at a time, which means you'll be waiting a **long** time for them to run.
+> If you are interested in running a workflow at that scale, we recommend that you request a full OSPool account,
+> as described here: [portal.osg-htc.org/application](https://portal.osg-htc.org/application)
 
 ## Concluding remarks
 
-## Appendix: Manual Setup
