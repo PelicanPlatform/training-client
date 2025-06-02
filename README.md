@@ -301,12 +301,12 @@ What you *do* need to know, however, are the consequences of the implementation.
   That way, if the Origin would reject a Client's request, so to will the Cache reject that same Client's request.
   *The data provider does not lose control over their data!*
 
-* **Caches help prevent the data storage from being overwhelmed**
+* **Caches help prevent the data repository from being overwhelmed**
 
   Because it is expensive to store open science data repositories on high-performance hardware,
   most open science storage systems can be overwhelmed by large transfers, many transfers, and especially by many large transfers.
   Often the data provider sets limits on the amount and frequency of data transfers from their system.
-  By using Caches, transfers via a Pelican Federation reduce the amount and frequency of data transfers,
+  By using Caches, transfers via a Pelican Federation reduce the amount and frequency of data transfers from the original repository,
   making it easier for researchers to access the data, especially for high throughput workflows.
 
 > [!IMPORTANT]
@@ -317,13 +317,200 @@ What you *do* need to know, however, are the consequences of the implementation.
 
 ## Accessing data using the Pelican Clients
 
-### Basic Client actions
+The primary way of interacting with data via a Pelican Federation is via a Pelican Client.
+A Pelican Client is simply a program that understands how to make requests of a Pelican Federation via the `pelican://` protocol.
+Currently, Pelican provides three Clients, which we will discuss today:
+
+* Pelican CLI Client (shell-based)
+* PelicanFS Client (python-based)
+* Pelican Plugin (HTCondor integration)
+
+Additional Clients are targeted for development by the Pelican team.
+And, in principle, anyone can develop their own Pelican Client based on the `pelican://` protocol.
+
+### Basic Client requests
+
+There are commands common to every Client.
+Each command corresponds to a request that the Client makes to the Federation, usually tied to a specific Pelican URL.
+The most common request by far is the `get` request.
+
+| Command | Request |
+| ------- | ------ |
+| `ls` | List the objects accessible via a Pelican URL |
+| `get` | Download object(s) via a Pelican URL |
+| `put` | Upload object(s) via a Pelican URL |
+
+A request may be granted or rejected, depending on the access rules defined for the corresponding namespace.
+The data provider for a namespace decides which "capabilities" are enabled for their namespace.
+
+Most "publicly accessible" namespaces enable the "Listings" and "PublicReads" capabilities, 
+which means that the Federation will grant an `ls` or `get` request made by *any* Pelican Client.
+Some namespaces may require that `get` requests provide a valid authorization token to be granted and in that case, the same applies to `ls` requests.
+
+> [!IMPORTANT]
+> All `put` requests *must* provide a valid authorization token, regardless of the namespace.
+> As such, we will not be covering `put` requests in today's training.
+> For more information on authorizing Client requests, including `put`, see the [Pelican documentation](https://docs.pelicanplatform.org/getting-data-with-pelican/client#get-a-protected-object-from-your-federation).
 
 ### Pelican CLI
 
-#### Advanced CLI options
+The Pelican Command Line Interface, or Pelican CLI, is the general purpose Client for interacting with Pelican Federations.
+The Pelican CLI is available as a standalone binary that does not require admin permissions to install.
+Together with its support for Linux, macOS, and Windows operating systems, the Pelican CLI is widely accessible.
+
+To install the Pelican CLI on your own device, follow the instructions at [docs.pelicanplatform.org/install](https://docs.pelicanplatform.org/install) for your operating system.
+If you are using a Linux operating system, you can quickly install the Pelican CLI following the [instructions here](https://docs.pelicanplatform.org/install/linux-binary).
+
+> [!TIP]
+> During today's tutorial, we recommend that you continue to use the OSPool Notebook, which comes with the Pelican CLI pre-installed.
+> In principle, however, the following exercises should work wherever the Pelican CLI is installed.
+
+Once installed, you can use the Pelican CLI by using the `pelican` noun-verb commands.
+For the requests listed above, you need to use the `object` noun.
+That is, the commands you'll be entering will take the form
+
+```
+pelican object <request> <additonal arguments>
+```
+
+where the `additional arguments` usually involves a Pelican URL.
+
+> [!NOTE]
+> There are other nouns besides the `object` noun for the `pelican` command, 
+> which in principle can be used to interact with specific components of a Pelican Federation, and even launch your own Pelican Federation,
+> but those are beyond the scope of today's training!
+
+#### Listing objects with the Pelican CLI
+
+To list the objects accessible via a particular namespace, use the `ls` verb and provide the Pelican URL for the desired namespace:
+
+```
+pelican object ls <Pelican URL>
+```
+
+Pelican maintains a test namespace within the OSDF under the namespace `pelicanplatform/test`.
+Since the Federation URL for the OSDF is `osg-htc.org`, that leads to the Pelican URL `pelican://osg-htc.org/pelicanplatform/test`.
+
+The command to list the objects accessible via this Pelican URL is
+
+```
+pelican object ls pelican://osg-htc.org/pelicanplatform/test
+```
+
+The output of running this command should look like this:
+
+```
+$ pelican object ls pelican://osg-htc.org/pelicanplatform/test
+hello-world.txt.md5          hello-world.txt
+```
+
+> [!TIP]
+> Instead of using the full OSDF Pelican URL, you can use the `osdf://` shorthand, like this:
+> 
+> ```
+> pelican object ls osdf:///pelicanplatform/test
+> ```
+>
+> This is exactly equivalent to the command used above.
+
+For additional information, you include the `-l`/`--long` flag:
+
+```
+pelican object ls --long pelican://osg-htc.org/pelicanplatform/test
+```
+
+which should show something like
+
+```
+/pelicanplatform/test/hello-world.txt.md5          50          2025-01-21 20:59:49
+/pelicanplatform/test/hello-world.txt              76          2025-01-21 20:57:01
+```
+
+> [!TIP]
+> Again, you can use the `osdf://` shorthand for specifying the Pelican URL:
+>
+> ```
+> pelican object ls --long osdf:///pelicanplatform/test
+> ```
+>
+> In general, anywhere you see `pelican://osg-htc.org/` you can replace it with `osdf:///`!
+
+#### Getting objects with the Pelican CLI
+
+To get an object using the Pelican CLI, you need to provide the Pelican URL for the desired object and the location/name of where to store the object locally:
+
+```
+pelican object get <Pelican URL> <local destination>
+```
+
+In the listing of the Pelican test namespace, we saw the object `hello-world.txt`. 
+Let's download that object to the current directory:
+
+```
+pelican object get pelican://osg-htc.org/pelicanplatform/test/hello-world.txt ./hello-world.txt
+```
+
+If the request to download the object is granted, the Client will start downloading the object.
+If that download takes more than a few seconds, you may see a progress bar displayed.
+
+If the command runs successfully, there will be a new file in your current directory called `hello-world.txt`.
+If you look at the contents of the file, you should see the following:
+
+```
+$ cat hello-world.txt
+If you are seeing this message, getting an object from OSDF was successful.
+```
+
+#### Getting objects recursively with the Pelican CLI
+
+What if you wanted to download all of the objects in the `/pelicanplatform/test` namespace? 
+If there are only a couple of objects, you could use the `pelican object ls` command to list the object names, 
+then run the corresponding `pelican object get` commands.
+But for more than a few items, this becomes tedious.
+
+Pelican utilizes the URL query syntax in Pelican URLs to modify its behavior.
+For this case, you can use the `?recursive` query to tell Pelican to act recursively on the provided Pelican URL.
+For example,
+
+```
+pelican object get pelican://osg-htc.org/pelicanplatform/test?recursive ./
+```
+
+will download the objects of the `/pelicanplatform/test` namespace into a local directory named `test` (the basename of the Pelican URL).
+If you look in that directory, you should see the two files corresponding to the two objects accessible from that namespace.
+
+```
+$ ls test
+hello-world.txt  hello-world.txt.md5
+```
+
+> [!TIP]
+> Another frequently used query is `?pack=auto`.
+> When getting a compressed object, this query tells the Pelican Client to automatically decompress the object during download.
+> Similarly, when uploading an object, the query tells the Pelican Client to automatically compress the object during upload.
+>
+> For more information on the queries that Pelican employs, see [this documentation page](https://docs.pelicanplatform.org/getting-data-with-pelican/client#utilizing-queries-with-your-url).
+
+#### [Optional] A peak behind the curtain..
+
+In the [What did you do?](#what-did-you-do-an-introduction-to-the-pelican-platform) section, 
+we described how Pelican and the `pelican://` protocol are based on the HTTP protocol.
+If you want to see what that looks like in practice, you can run any of the above CLI commands with the `-d` or `--debug` flag.
+For example:
+
+```
+pelican object get --debug pelican://osg-htc.org/pelicanplatform/test/hello-world.txt ./
+```
+
+The output of this command will include details about the information that the Client is requesting, 
+and to what components of the Pelican Federation the Client is talking to.
+
+> [!TIP]
+> For insight into the HTTP queries being made by the Client, see [the FAQ page](https://docs.pelicanplatform.org/faq#how-can-i-tell-what-services-my-pelican-client-will-talk-to-before-i-try-to-getput-objects). 
 
 ### PelicanFS
+
+TODO
 
 ## Accessing data using Pelican and HTCondor
 
