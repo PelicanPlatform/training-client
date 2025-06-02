@@ -322,7 +322,7 @@ A Pelican Client is simply a program that understands how to make requests of a 
 Currently, Pelican provides three Clients, which we will discuss today:
 
 * Pelican CLI Client (shell-based)
-* PelicanFS Client (python-based)
+* PelicanFS Client (Python-based)
 * Pelican Plugin (HTCondor integration)
 
 Additional Clients are targeted for development by the Pelican team.
@@ -510,7 +510,86 @@ and to what components of the Pelican Federation the Client is talking to.
 
 ### PelicanFS
 
-TODO
+Pelican provides the Python package `pelicanfs`, which enables the transfer of objects via the `pelican://` protocol from inside of Python.
+
+> [!NOTE]
+> The `pelicanfs` package is an implementation of the [`fsspec` package](https://filesystem-spec.readthedocs.io/en/latest/), which provides a Pythonic interface to filesystems.
+> Since Pelican is not a filesystem, however, not all features of the `fsspec` package are available in the `pelicanfs` package.
+
+The `pelicanfs` package can be installed via `pip`, i.e.,
+
+```bash
+python3 -m pip install pelicanfs
+```
+
+> [!TIP]
+> During today's tutorial, we recommend that you continue to use the OSPool Notebook, which comes with the `pelicanfs` package pre-installed.
+> In principle, however, the following exercises should work wherever the Pelican CLI is installed.
+
+Once installed, you can use the package within a Python script or in a Python console.
+For the following exercises, launch a Python console by entering
+
+```bash
+python3
+```
+
+or by launching the Python console via the Jupyter launcher in the OSPool Notebook.
+
+#### Manual import and setup of `pelicanfs`
+
+The main method for using `pelicanfs` is to use the `PelicanFileSystem` class.
+First, import this from `pelicanfs` as follows:
+
+```python
+from pelicanfs.core import PelicanFileSystem
+```
+
+Next, instantiate the an object of the class for a particular Federation.
+For this example, we'll continue using the OSDF Federation, which has the Federation URL of `osg-htc.org`:
+
+```python
+pelfs = PelicanFileSystem('pelican://osg-htc.org')
+```
+
+The `pelfs` object has methods for interacting with objects via the Federation.
+Usage typically looks like
+
+```python
+pelfs.<method>('<namespace_prefix>/<object_name>')
+```
+
+#### Listing objects with PelicanFS
+
+Again, we'll be working with the Pelican test namespace in the OSDF at `/pelicanplatform/test`.
+To list the objects associated with this namespace using `pelicanfs`, use the `ls` method of the `pelfs` object we instantiated above:
+
+```python
+ls_results = pelfs.ls('/pelicanplatform/test')
+```
+
+This command returns a list of dictionaries with the details of the objects that are connected via the `/pelicanplatform/test` namespace.
+
+```python
+>>> print(ls_results)
+[{'name': '/pelicanplatform/test/hello-world.txt.md5', 'size': None, 'type': 'file'}, {'name': '/pelicanplatform/test/hello-world.txt', 'size': None, 'type': 'file'}]
+```
+
+If you just want the names of the objects:
+
+```python
+>>> print([i['name'] for i in ls_results])
+['/pelicanplatform/test/hello-world.txt.md5', '/pelicanplatform/test/hello-world.txt']
+```
+
+> [!NOTE]
+> The `pelicanfs` package is still relatively new and not all features available in the Pelican CLI are available in the `pelicanfs` package.
+> In this case, the object `size` is not currently available.
+
+#### Getting objects with PelicanFS
+
+
+
+#### Automated use of `pelicanfs`
 
 ## Accessing data using Pelican and HTCondor
 
