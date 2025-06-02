@@ -33,7 +33,7 @@ Screenshots of this process are included in the Accompanying Slides.
 5. If given a choice of "Server Options", select "Guest Account: Explore OSPool Notebooks", then click the "Start" button.
 6. Wait for server to start. Your browser should load a JupyterLab instance and display a "Launcher" tab.
 7. In the file navigation pane on the left-hand side, double click on the `training-client` directory to navigate to it.
-8. In the "Launcher" tab, under the "Other" category, double click the "Terminal" box to launch a shell console.
+8. In the "Launcher" tab, under the "Other" category, click the "Terminal" box to launch a shell console.
 
 ## Quickstart
 
@@ -562,11 +562,19 @@ ls_results = pelfs.ls('/pelicanplatform/test')
 This command returns a list of dictionaries with the details of the objects that are connected via the `/pelicanplatform/test` namespace.
 
 ```python
+print(ls_results)
+```
+
+```python
 >>> print(ls_results)
 [{'name': '/pelicanplatform/test/hello-world.txt.md5', 'size': None, 'type': 'file'}, {'name': '/pelicanplatform/test/hello-world.txt', 'size': None, 'type': 'file'}]
 ```
 
 If you just want the names of the objects:
+
+```python
+print([i['name'] for i in ls_results])
+```
 
 ```python
 >>> print([i['name'] for i in ls_results])
