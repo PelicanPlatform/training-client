@@ -92,14 +92,16 @@ this includes non-public data, so long as it is not highly regulated or sensitiv
 > For more information on the OSDF, including next steps for connecting your open science data repository to the OSDF, 
 > see [osg-htc.org/services/osdf](https://osg-htc.org/services/osdf).
 
-Once a data repository is connected to the OSDF, its contents are easily accessible via the Pelican Clients that are the subject of this tutorial.\*
-Every object accessible via the OSDF has a corresponding Pelican URL that exists within the single, overarching namespace of the OSDF.
-This enables you, the user, to access any object in the OSDF by providing its Pelican URL, 
-**without needing to know anything about the type of storage used to host the data**.
-That is, the commands to interact with objects via Pelican are always the same, 
-regardless of whether the data lives on POSIX, S3, or some other storage system!
+The OSDF is powered by the [Pelican Platform](https://pelicanplatform.org),
+a software suite for creating *data federations*.
+A *data federation* unites **data contributors** with **data consumers** under a single namespace and access model.
 
-\**This is technically true of any Pelican Federation; the OSDF is simply an established instance of such a Federation.*
+* **Data contributors** can connect existing datastores to a data federation *while maintaining their access policies*
+* **Data consumers** can easily access objects via a data federation *without needing to know how the storage works*
+
+The data consumer uses a Pelican Client to access objects via a data federation, 
+and that is the subject of today's tutorial.
+The OSDF is the flagship instance of a Pelican Data Federation.
 
 ### Anatomy of a Pelican URL
 
