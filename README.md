@@ -1,6 +1,6 @@
 # HTC25 Pelican Client Tutorial
 
-This branch of the repository contains the materials that will be used for the session ["Use Your Data Anywhere"](https://agenda.hep.wisc.edu/event/2297/contributions/33938/) of [HTC25](https://agenda.hep.wisc.edu/event/2297/), on Jun. 4, 2025.
+This branch of the repository contains the materials that will be used for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"](https://agenda.hep.wisc.edu/event/2297/contributions/33938/) of [HTC25](https://agenda.hep.wisc.edu/event/2297/), on Jun. 4, 2025.
 
 Clients covered:
 * [Pelican CLI](https://docs.pelicanplatform.org/getting-data-with-pelican/client)
