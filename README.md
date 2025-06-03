@@ -116,7 +116,7 @@ There are four components to a Pelican URL:
 These components are combined into a single string to form the Pelican URL:
 
 ```html
-<protocol>://<federation_URL>/<namespace_prefix>/<object_name>
+<protocol>://<discovery_URL>/<namespace_prefix>/<object_name>
 ```
 
 By examining each of these components, we can build up an understanding of how Pelican is structured.
@@ -136,7 +136,7 @@ Among other things, this means Pelican can leverage the ubiquitous internet infr
 The Pelican URL is now
 
 ```html
-pelican://<federation_URL>/<namespace_prefix>/<object_name>
+pelican://<discovery_URL>/<namespace_prefix>/<object_name>
 ```
 
 #### The discovery URL
