@@ -3,11 +3,33 @@
 This branch of the repository contains the materials that will be used for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"](https://agenda.hep.wisc.edu/event/2297/contributions/33938/) of [HTC25](https://agenda.hep.wisc.edu/event/2297/), on Jun. 4, 2025.
 
 Clients covered:
+
 * [Pelican CLI](https://docs.pelicanplatform.org/getting-data-with-pelican/client)
 * [PelicanFS](https://github.com/PelicanPlatform/pelicanfs)
 * [HTCondor Plugin](https://htcondor.readthedocs.io/en/latest/users-manual/file-transfer.html#file-transfer-using-a-url)
 
 **Accompanying Slides**: [go.wisc.edu/6k6ki5](https://go.wisc.edu/6k6ki5)
+
+## Outline
+
+* [Requirements](#requirements)
+* [Setup](#setup)
+* [Quickstart](#quickstart)
+* [What did you do?](#what-did-you-do-an-introduction-to-the-pelican-platform)
+  * [Exploring the OSDF](#exploring-the-osdf)
+  * [Anatomy of a Pelican URL](#anatomy-of-a-pelican-url)
+  * [Getting an object using a Pelican URL](#getting-an-object-using-a-pelican-url)
+* [Accessing data using the Pelican Clients](#accessing-data-using-the-pelican-clients)
+  * [Basic Client requests](#basic-client-requests)
+  * [Pelican CLI](#pelican-cli)
+  * [PelicanFS](#pelicanfs)
+* [Accessing data using Pelican and HTCondor](#accessing-data-using-pelican-and-htcondor)
+  * [About the data](#about-the-data)
+  * [Exploring the data](#exploring-the-data)
+  * [A rudimentary climate analysis](#a-rudimentary-climate-analysis)
+  * [Scaling out](#scaling-out)
+  * [Scaling out with HTCondor and Pelican](#scaling-out-with-htcondor-and-pelican)
+  * [Submitting a list of jobs](#submitting-a-list-of-jobs)
 
 ## Requirements
 
