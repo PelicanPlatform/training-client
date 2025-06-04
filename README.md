@@ -876,14 +876,15 @@ but the important thing to understand is that each job will transfer its unique 
 ### Submitting a list of jobs
 
 All we need to do at this point is make the list of station IDs to analyze.
-To keep things simple, we'll only do 10 stations, instead of all 120,000.
+To keep things simple, we'll only do 10 stations, instead of all 130,000.
 
-Run the following command to generate such a list:
+Use the `generate_list.sh` script to generate such a list:
 
 ```bash
- grep "USW00014837" -A 9 ghcnd-stations.txt | cut -d " " -f 1 > station_list.txt
+./generate_list.sh
 ```
 
+This will create a file called `station_list.txt`.
 The station list should look like this:
 
 ```
@@ -921,10 +922,28 @@ and you should see the 10 image files in the `results` directory.
 > The Plugin works with the query parameters, e.g., `?recursive` and `?pack`, discussed in an [earlier section](#getting-objects-recursively-with-the-pelican-cli).
 
 > [!IMPORTANT]
-> If you really do want run all 120,000 analyses, please don't use the OSPool Notebook to do so!
+> If you really do want run all 130,000 analyses, please don't use the OSPool Notebook to do so!
 > The OSPool Notebook can only run a handful of jobs at a time, which means you'll be waiting a **long** time for them to run.
 > If you are interested in running a workflow at that scale, we recommend that you request a full OSPool account,
 > as described here: [portal.osg-htc.org/application](https://portal.osg-htc.org/application)
 
 ## Concluding remarks
 
+A longer version of this tutorial is planned for PEARC25 and will cover how authentication works with the Clients.
+
+More information on Pelican:
+
+* Project page: [pelicanplatform.org](https://pelicanplatform.org)
+* Documentation: [docs.pelicanplatform.org](https://docs.pelicanplatform.org)
+* Support: [help@pelicanplatform.org](mailto:help@pelicanplatform.org)
+
+More information about the OSDF:
+
+* Overview page: [osg-htc.org/services/osdf](https://osg-htc.org/services/osdf)
+* Connected Repositories: [osg-htc.org/services/osdf/data](https://osg-htc.org/services/data)
+* Support: [support@osg-htc.org](mailto:support@osg-htc.org)
+
+### Acknowledgements
+
+This material is based upon work supported by the National Science Foundation under Cooperative Agreements OAC-2331480. 
+Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
