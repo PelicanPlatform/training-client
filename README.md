@@ -54,8 +54,12 @@ Screenshots of this process are included in the Accompanying Slides.
 4. Sign in to your identity provider.
 5. If given a choice of "Server Options", select "Guest Account: Explore OSPool Notebooks", then click the "Start" button.
 6. Wait for server to start. Your browser should load a JupyterLab instance and display a "Launcher" tab.
-7. In the file navigation pane on the left-hand side, double click on the `training-client` directory to navigate to it.
+7. In the file navigation pane on the left-hand side, double click on the `pelican-training-client` directory to navigate to it.
 8. In the "Launcher" tab, under the "Other" category, click the "Terminal" box to launch a shell console.
+
+Jupyter notebooks (`.ipynb` files) are provided that contain the commands for the hands-on exercises.
+
+For a full walkthrough and information, we recommend reading on!
 
 ## Quickstart
 
