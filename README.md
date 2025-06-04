@@ -628,7 +628,7 @@ Behind the scenes, `pelicanfs` will download the object as needed, and `fsspec` 
 Many Python packages work with `fsspec` automatically, which in turn means that they can work with `pelicanfs` automatically.
 That means that you don't necessarily have to manually invoke `pelicanfs` to use it!
 
-As an example, let's read in a csv file from a NOAA dataset available via the OSDF from the AWS OpenData repository.
+As an example, let's read in a csv file from a NOAA dataset available via the OSDF from the AWS Open Data repository.
 (More on this dataset in the [Accessing data using Pelican and HTCondor](#accessing-data-using-pelican-and-htcondor).)
 
 To see how this works, **first exit and restart your Python console**.
@@ -690,14 +690,14 @@ From the [README](https://docs.opendata.aws/noaa-ghcn-pds/readme.html):
 > It contains station-based measurements from land-based stations worldwide, about two thirds of which are for precipitation measurements only (Menne et al., 2012).
 > GHCN-Daily is a composite of climate records from numerous sources that were merged together and subjected to a common suite of quality assurance reviews (Durre et al., 2010).
 
-The GHCN data set is available via Amazon's OpenData repository, at [https://noaa-ghcn-pds.s3.amazonaws.com/](https://noaa-ghcn-pds.s3.amazonaws.com/).
-The OpenData repository is already connected to the OSDF under the namespace `aws-opendata`. 
+The GHCN data set is available via [Amazon's Open Data](https://aws.amazon.com/opendata/) repository, at [https://noaa-ghcn-pds.s3.amazonaws.com/index.html](https://noaa-ghcn-pds.s3.amazonaws.com/index.html).
+The Open Data repository is already connected to the OSDF under the namespace `aws-opendata`. 
 With a little digging, we find that the NOAA dataset is accessible via `us-east-1/noaa-ghcn-pds`.
 Altogether, our starting Pelican URL is `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds`.
 
 Next, we need an object to work with. 
 Normally, we would use the `ls` functionality discussed above to see the objects accessible via this namespace, but listings are not enabled for this namespace.
-Instead, you can browse the [AWS index link](https://noaa-ghcn-pds.s3.amazonaws.com/) to see the files available.
+Instead, you can browse the [AWS index link](https://noaa-ghcn-pds.s3.amazonaws.com/index.html) to see the files available.
 
 In the top level of the namespace is a `ghcnd-stations.txt` file that serves as an index of the station names, locations, and identifiers.
 We can use this file to identify the stations of interest.
@@ -806,7 +806,7 @@ If the file is in the same directory as the submit file, you can declare that tr
 transfer_input_files = USW00014837.csv
 ```
 
-If you want HTCondor to transfer the file via Pelican directly from the OpenData repository, 
+If you want HTCondor to transfer the file via Pelican directly from the Open Data repository, 
 you replace the filename with it's full Pelican URL:
 
 ```
