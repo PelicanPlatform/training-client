@@ -384,7 +384,6 @@ Some namespaces may require that `get` requests provide a valid authorization to
 
 > [!IMPORTANT]
 > All `put` requests *must* provide a valid authorization token, regardless of the namespace.
-> As such, we will not be covering `put` requests in today's training.
 > For more information on authorizing Client requests, including `put`, see the [Pelican documentation](https://docs.pelicanplatform.org/getting-data-with-pelican/client#get-a-protected-object-from-your-federation).
 
 ### Pelican CLI
@@ -396,9 +395,8 @@ Together with its support for Linux, macOS, and Windows operating systems, the P
 To install the Pelican CLI on your own device, follow the instructions at [docs.pelicanplatform.org/install](https://docs.pelicanplatform.org/install) for your operating system.
 If you are using a Linux operating system, you can quickly install the Pelican CLI following the [instructions here](https://docs.pelicanplatform.org/install/linux-binary).
 
-> [!TIP]
-> During today's tutorial, we recommend that you continue to use the OSPool Notebook, which comes with the Pelican CLI pre-installed.
-> In principle, however, the following exercises should work wherever the Pelican CLI is installed.
+> [!WARNING]
+> For the exercises involving authentication, you **must** use the OSPool Notebook environment!
 
 Once installed, you can use the Pelican CLI by using the `pelican` noun-verb commands.
 For the requests listed above, you need to use the `object` noun.
@@ -509,6 +507,10 @@ hello-world.txt  hello-world.txt.md5
 >
 > For more information on the queries that Pelican employs, see [this documentation page](https://docs.pelicanplatform.org/getting-data-with-pelican/client#utilizing-queries-with-your-url).
 
+#### Putting objects with the Pelican CLI
+
+
+
 #### [Optional] A peak behind the curtain..
 
 In the [What did you do?](#what-did-you-do-an-introduction-to-the-pelican-platform) section, 
@@ -570,8 +572,13 @@ pelfs = PelicanFileSystem('pelican://osg-htc.org')
 ```
 
 > [!TIP]
-> Here you need to use the full federation address and *not* the `osdf://` shorthand.
-> This may be changed in a future release of PelicanFS.
+> For using the OSDF specifically, you can also do
+> 
+> ```python
+> from pelicanfs.core import OSDFFileSystem
+> pelfs = OSDFFileSystem()
+> ```
+>
 
 The `pelfs` object has methods for interacting with objects via the Federation.
 Usage typically looks like
@@ -621,14 +628,10 @@ Let's download the `hello-world.txt` object using PelicanFS.
 To do so, you'll use the `get_file` method:
 
 ```python
-pelfs.get_file('/pelicanplatform/test/hello-world.txt', 'hello-world.txt')
+pelfs.get('/pelicanplatform/test/hello-world.txt', 'hello-world.txt')
 ```
 
 This will download the object and save it as the file `hello-world.txt` in the local directory.
-
-> [!TIP]
-> Normally, the method you would use is the `get` method, not the `get_file` method,
-> but there is currently a bug that prevents the `get` method from working correctly.
 
 Once the object is downloaded, you can open it as usual:
 
@@ -650,6 +653,10 @@ print(direct_read)
 ```
 
 Behind the scenes, `pelicanfs` will download the object as needed, and `fsspec` will choose an appropriate method for storing it locally.
+
+> [!WARNING]
+> When the Python process exits, `fsspec` will clean up after itself.
+> If you want the data to be accessible locally after exiting the program, you should use the explicit `pelfs.get()` command to save it locally.
 
 #### Automated use of `pelicanfs`
 
@@ -698,6 +705,14 @@ You should see the following:
 4  USW00014837  19391005    TMAX         211    NaN    NaN      X       NaN
 ```
 
+> [!WARNING]
+> When the Python process exits, `fsspec` will clean up after itself.
+> If you want the data to be accessible locally after exiting the program, you should use the explicit `pelfs.get()` command to save it locally.
+
+> [!IMPORTANT]
+> At this time, the `pelicanfs` package does not support authenticated requests.
+> Stay tuned to [https://github.com/PelicanPlatform/pelicanfs](https://github.com/PelicanPlatform/pelicanfs) for updates!
+
 ## Accessing data using Pelican and HTCondor
 
 The real power of Pelican is the ability to provide data to high throughput computing.
@@ -718,21 +733,33 @@ From the [README](https://docs.opendata.aws/noaa-ghcn-pds/readme.html):
 > It contains station-based measurements from land-based stations worldwide, about two thirds of which are for precipitation measurements only (Menne et al., 2012).
 > GHCN-Daily is a composite of climate records from numerous sources that were merged together and subjected to a common suite of quality assurance reviews (Durre et al., 2010).
 
+### Finding the data
+
 The GHCN data set is available via [Amazon's Open Data](https://aws.amazon.com/opendata/) repository, at [https://noaa-ghcn-pds.s3.amazonaws.com/index.html](https://noaa-ghcn-pds.s3.amazonaws.com/index.html).
 The Open Data repository is already connected to the OSDF under the namespace `aws-opendata`. 
 With a little digging, we find that the NOAA dataset is accessible via `us-east-1/noaa-ghcn-pds`.
 Altogether, our starting Pelican URL is `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds`.
 
-Next, we need an object to work with. 
-Normally, we would use the `ls` functionality discussed above to see the objects accessible via this namespace, but listings are not enabled for this namespace.
-Instead, you can browse the [AWS index link](https://noaa-ghcn-pds.s3.amazonaws.com/index.html) to see the files available.
+With the base URL constructed, we can now look to see what's there!
 
-In the top level of the namespace is a `ghcnd-stations.txt` file that serves as an index of the station names, locations, and identifiers.
+```bash
+pelican object ls osdf:///aws-opendata/us-east-1/noaa-ghcn-pds
+```
+
+You should see something like this:
+
+```
+$ pelican object ls osdf:///aws-opendata/us-east-1/noaa-ghcn-pds
+ghcnd-countries.txt          ghcnd-inventory.txt          ghcnd-states.txt               ghcnd-stations.txt
+ghcnd-version.txt            index.html                   mingle-list.txt                readme-by_station.txt
+readme-by_year.txt           readme.txt                   status-by_station.txt          status-by_year.txt
+status.txt                   test.txt                     csv.gz                         csv
+parquet
+```
+
+The file `ghcnd-stations.txt` serves as an index of the station names, locations, and identifiers.
 We can use this file to identify the stations of interest.
-The Pelican URL for this object is `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt`.
-
-Further exploration of the AWS index shows that the data for individual stations follow the naming of `csv/by_station/<stationID>.csv`,
-so the Pelican URLs for indvidual csv files are `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/<stationID>.csv`.
+Appending the file name to the previous Pelican URL, we now have `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/ghcnd-stations.txt`.
 
 ### Exploring the data
 
@@ -768,7 +795,10 @@ AFM00040990  31.5000   65.8500 1010.0    KANDAHAR AIRPORT                       
 
 The first column of this file is the station ID that is used as the name of the csv file. 
 For example, if the station ID is `USW00014837`, the name of the csv file is `USW00014837.csv`.
-In turn, that leads to a Pelican URL of `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv`.
+
+Climate data by station is organized by `csv/by_station/<stationID>.csv`,
+so the Pelican URLs for indvidual csv files are `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/<stationID>.csv`.
+Altogether, that leads to a Pelican URL of `osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv`.
 
 Next, download one of these files. 
 What is the command you should use?
