@@ -29,7 +29,8 @@ git checkout name-of-training-branch
 
 | Branch name | Training Date | Description |
 | --- | --- | --- |
-| [htc25-pelican-tutorial](https://github.com/PelicanPlatform/training-client/tree/htc25-pelican-tutorial) | 2025-06-04 | Materials for the session ["Use Your Data Anywhere"](https://agenda.hep.wisc.edu/event/2297/contributions/33938/) of [HTC25](https://agenda.hep.wisc.edu/event/2297/) |
+| [htc25-pelican-tutorial](https://github.com/PelicanPlatform/training-client/tree/htc25-pelican-tutorial) | 2025-06-04 | Materials for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"](https://agenda.hep.wisc.edu/event/2297/contributions/33938/) of [HTC25](https://agenda.hep.wisc.edu/event/2297/) |
+| [pearc25-pelican-tutorial](https://github.com/PelicanPlatform/training-client/tree/pearc25-pelican-tutorial) | 2025-07-21 | Materials for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"](https://pearc.acm.org/pearc25/workshops-and-tutorials/#half-day-AM-tutorial) of [PEARC25](https://pearc.acm.org/pearc25/) |
 
 ## More Information
 
