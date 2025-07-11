@@ -9,7 +9,7 @@ Clients covered:
 * [HTCondor Plugin](https://htcondor.readthedocs.io/en/latest/users-manual/file-transfer.html#file-transfer-using-a-url)
 
 Accompanying Slides: 
-* Google slides: TBD
+* Google slides: [go.wisc.edu/s79rt7](go.wisc.edu/s79rt7)
 * Github PDF: TBD
 
 ## Outline
