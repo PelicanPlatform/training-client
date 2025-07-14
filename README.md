@@ -730,7 +730,10 @@ print(direct_read)
 Behind the scenes, `pelicanfs` will download the object as needed, and `fsspec` will choose an appropriate method for storing it locally.
 
 > [!WARNING]
-> When the Python process exits, `fsspec` will clean up after itself.
+> The `fsspec` module has an algorithm for deciding where to temporarily store objects.
+> It may decide to keep it in memory (RAM), or it may decide to write it to disk somewhere.
+> When the Python process exits, `fsspec` will clean up after itself **and remove the temporary objects**!
+> 
 > If you want the data to be accessible locally after exiting the program, you should use the explicit `pelfs.get()` command to save it locally.
 
 #### Automated use of `pelicanfs`
@@ -781,7 +784,8 @@ You should see the following:
 ```
 
 > [!WARNING]
-> When the Python process exits, `fsspec` will clean up after itself.
+> Remember, when the Python process exits, `fsspec` will clean up after itself and remove any temporary data it downloaded.
+>
 > If you want the data to be accessible locally after exiting the program, you should use the explicit `pelfs.get()` command to save it locally.
 
 > [!IMPORTANT]
