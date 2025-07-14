@@ -9,7 +9,7 @@ Clients covered:
 * [HTCondor Plugin](https://htcondor.readthedocs.io/en/latest/users-manual/file-transfer.html#file-transfer-using-a-url)
 
 Accompanying Slides: 
-* Google slides: [go.wisc.edu/s79rt7](go.wisc.edu/s79rt7)
+* Google slides: [go.wisc.edu/s79rt7](https://go.wisc.edu/s79rt7)
 * Github PDF: TBD
 
 ## Outline
@@ -509,7 +509,71 @@ hello-world.txt  hello-world.txt.md5
 
 #### Putting objects with the Pelican CLI
 
+You can also use the Pelican CLI to "put" or upload an object to a data store connected to a Pelican Federation.
+The syntax for the command is similar to the `get` command:
 
+```
+pelican object put <local object> <Pelican URL destination>
+```
+
+For this example, we'll upload data to the object storage connected via the `osdf:///osdf-tutorial/protected` namespace.
+
+> [!IMPORTANT]
+> If you are executing commands via the included Jupyter notebook, you must do the following!
+> 
+> 1. In the OSPool Notebook, open a "Terminal" tab.
+> 2. Run the following command:
+> 
+>    ```
+>    pelican credentials reset-password
+>    ```
+> 
+> 3. When prompted for a new password, skip entering a password and hit enter.
+>
+
+To see this command in action, we'll upload the `hello-world.txt` file from earlier under a new, unique name.
+Set the unique name using the following:
+
+```
+my_inits="firstname.lastname"
+```
+
+then upload the file using
+
+```
+pelican object put hello-world.txt osdf:///osdf-tutorial/protected/$(my_inits).txt
+```
+
+You'll be prompted to authenticate the action with a message that looks like this:
+
+```
+To approve credentials for this operation, please navigate to the following URL and approve the request:
+
+https://tutorial-origin.svc.osg-htc.org/api/v1.0/issuer/device?user_code=EXA_3DB_285
+```
+
+Open **your unique link** in a new browser tab and sign-in the same way that you signed in to the OSPool Notebook.
+Once confirmed, close the tab and return to the notebook, where you should see that the command completed successfully.
+
+> [!IMPORTANT]
+> Because the `put` action will modify the data in a connected storage device, Pelican **always** requires authentication to perform the `put` action.
+> Whether the `ls` or `get` actions require authentication is configured separately for each namespace.
+
+The uploaded object is now available via the `osdf:///osdf-tutorial/protected`. 
+You can confirm this by running
+
+```
+pelican object ls osdf:///osdf-tutorial/protected
+```
+
+and, optionally, you can can re-download the object using
+
+```
+pelican object get osdf:///osdf-tutorial/protected/$(my_inits).txt ./$(my_inits).txt
+```
+
+Note that these actions also require authentication, as implied by the use of `protected` in the namespace prefix.
+But the Client will remember your recent authentication for this namespace, so you shouldn't need to login each time you interact with the same protected namespace.
 
 #### [Optional] A peak behind the curtain..
 
@@ -712,6 +776,31 @@ You should see the following:
 > [!IMPORTANT]
 > At this time, the `pelicanfs` package does not support authenticated requests.
 > Stay tuned to [https://github.com/PelicanPlatform/pelicanfs](https://github.com/PelicanPlatform/pelicanfs) for updates!
+
+### Pelican Web Client
+
+Pelican developers are actively working on a browser interface for Pelican Federations, 
+so that researchers can get/ls/put data via a Federation through their web browser.
+This client is not yet available.
+
+But for some insight as to how this client might work, we invite you to explore the OSDF Datasets page again at [osg-htc.org/services/osdf/data](http://osg-htc.org/services/osdf/data).
+
+1. Go to [osg-htc.org/services/osdf/data](http://osg-htc.org/services/osdf/data) in your browser.
+2. Click on a row of the table for more information about a dataset.
+3. In the pop-up window, scroll down to the "Download a Public Object" section.
+4. Click the button "Click to Download Public Object" button.
+
+Just like that, you've downloaded an object from the OSDF via your web browser.
+
+> [!INFO]
+> All that this button does is make an HTTP GET call to the appropriate address within the Federation.
+> To see what that looks like, you can inspect the URL address associated with the "Click to Download Public Object" button:
+> 
+> * Hover over the button and look at the link preview, or
+> * Right-click on the button and select "Copy link address", then paste the text somewhere to look at it.
+> 
+> In principle, any web developer who understands how to map Pelican URLs to HTTP calls can design their own web client.
+> The Pelican team is working to provide an out-of-the-box solution that can be easily enabled for a Federation or an Origin/Namespace.
 
 ## Accessing data using Pelican and HTCondor
 
