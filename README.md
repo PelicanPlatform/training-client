@@ -484,7 +484,24 @@ If there are only a couple of objects, you could use the `pelican object ls` com
 then run the corresponding `pelican object get` commands.
 But for more than a few items, this becomes tedious.
 
-Pelican utilizes the URL query syntax in Pelican URLs to modify its behavior.
+Pelican provides a "recursive" option for getting objects. 
+There are two ways of invoking this option.
+
+First, you can pass the `-r` or `--recursive` flag to your get command:
+
+```
+pelican object get --recursive osdf:///pelicanplatform/test ./
+```
+
+This will download the objects of the `/pelicanplatform/test` namespace into a local directory named `test` (the basename of the Pelican URL).
+If you look in that directory, you should see the two files corresponding to the two objects accessible from that namespace.
+
+```
+$ ls test
+hello-world.txt  hello-world.txt.md5
+```
+
+Second, you can use the URL query syntax in Pelican URLs to modify its behavior.
 For this case, you can use the `?recursive` query to tell Pelican to act recursively on the provided Pelican URL.
 For example,
 
@@ -492,13 +509,7 @@ For example,
 pelican object get osdf:///pelicanplatform/test?recursive ./
 ```
 
-will download the objects of the `/pelicanplatform/test` namespace into a local directory named `test` (the basename of the Pelican URL).
-If you look in that directory, you should see the two files corresponding to the two objects accessible from that namespace.
-
-```
-$ ls test
-hello-world.txt  hello-world.txt.md5
-```
+will do the same thing as the `pelican object get --recursive` command we used above.
 
 > [!TIP]
 > Another frequently used query is `?pack=auto`.
