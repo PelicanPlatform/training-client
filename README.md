@@ -792,7 +792,7 @@ But for some insight as to how this client might work, we invite you to explore 
 
 Just like that, you've downloaded an object from the OSDF via your web browser.
 
-> [!INFO]
+> [!NOTE]
 > All that this button does is make an HTTP GET call to the appropriate address within the Federation.
 > To see what that looks like, you can inspect the URL address associated with the "Click to Download Public Object" button:
 > 
