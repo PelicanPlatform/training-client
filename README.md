@@ -546,13 +546,19 @@ To see this command in action, we'll upload the `hello-world.txt` file from earl
 Set the unique name using the following:
 
 ```
-my_inits="firstname.lastname"
+my_unique_object_name="pearc.test.$(python3 -m uuid | cut -d '-' -f 1).txt"
 ```
 
-then upload the file using
+To see the generated name, use
 
 ```
-pelican object put hello-world.txt osdf:///osdf-tutorial/protected/$(my_inits).txt
+echo $my_unique_object_name
+```
+
+Next, confirm that this object does not already exist in the protected namespace by running the following command:
+
+```
+pelican object ls osdf:///osdf-tutorial/protected/${my_unique_object_name}
 ```
 
 You'll be prompted to authenticate the action with a message that looks like this:
@@ -570,17 +576,25 @@ Once confirmed, close the tab and return to the notebook, where you should see t
 > Because the `put` action will modify the data in a connected storage device, Pelican **always** requires authentication to perform the `put` action.
 > Whether the `ls` or `get` actions require authentication is configured separately for each namespace.
 
+**The object should not exist yet!**
+
+Now, let's upload the file using
+
+```
+pelican object put hello-world.txt osdf:///osdf-tutorial/protected/${my_unique_object_name}
+```
+
 The uploaded object is now available via the `osdf:///osdf-tutorial/protected`. 
 You can confirm this by running
 
 ```
-pelican object ls osdf:///osdf-tutorial/protected
+pelican object ls osdf:///osdf-tutorial/protected/${my_unique_object_name}
 ```
 
 and, optionally, you can can re-download the object using
 
 ```
-pelican object get osdf:///osdf-tutorial/protected/$(my_inits).txt ./$(my_inits).txt
+pelican object get osdf:///osdf-tutorial/protected/${my_unique_object_name} ./${my_unique_object_name}
 ```
 
 Note that these actions also require authentication, as implied by the use of `protected` in the namespace prefix.
