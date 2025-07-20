@@ -600,7 +600,26 @@ pelican object get osdf:///osdf-tutorial/protected/${my_unique_object_name} ./${
 Note that these actions also require authentication, as implied by the use of `protected` in the namespace prefix.
 But the Client will remember your recent authentication for this namespace, so you shouldn't need to login each time you interact with the same protected namespace.
 
-#### [Optional] A peak behind the curtain..
+#### Getting/putting LOTS of objects with the Pelican CLI
+
+The CLI also provides a "sync" verb for transferring lots of objects.
+
+The syntax for getting lots of objects is
+
+```
+pelican object sync <Pelican URL> <destination>
+```
+
+The syntax for putting lots of objects is
+
+```
+pelican object sync <local source> <Pelican URL>
+```
+
+The main advantage of using the `object sync` command is for handling interruptions.
+If the transfer is interrupted, rerunning the command will automatically skip the objects that have already been successfully transferred.
+
+#### [Optional] A peek behind the curtain..
 
 In the [What did you do?](#what-did-you-do-an-introduction-to-the-pelican-platform) section, 
 we described how Pelican and the `pelican://` protocol are based on the HTTP protocol.
