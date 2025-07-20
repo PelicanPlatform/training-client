@@ -1,0 +1,19 @@
+container_image = osdf:///ospool/uc-shared/public/OSG-Staff/training/python.sif
+
+executable   = example.py
+arguments    = $(STATION_ID)
+
+transfer_input_files = my_functions.py
+
+should_transfer_files = YES
+
+log          = logs/example.$(Cluster).log
+output       = logs/$(STATION_ID).out
+error        = logs/$(STATION_ID).err
+
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 2GB
+
+queue STATION_ID from station_list.txt
+
