@@ -940,19 +940,21 @@ Altogether, that leads to a Pelican URL of `osdf:///aws-opendata/us-east-1/noaa-
 Next, download one of these files. 
 What is the command you should use?
 
+Here is the command to download the csv file for a station using Pelican:
+
+```
+pelican object get osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv ./
+```
+
+We'll use this file in a minute as part of our analysis. 
+
 ### A rudimentary climate analysis
 
 In the `htcondor-plugin` directory is the python script `example.py`. 
 This script takes a station ID as an argument and, assuming the corresponding csv file is present in the directory,
 will generate an image of the distribution of high and low temperatures across the meteorological seasons for that station.
 
-Download the csv file for a station using Pelican, for example:
-
-```
-pelican object get osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/USW00014837.csv ./
-```
-
-Then run the script using this command:
+We can run the script using this command (it will use the data we just downloaded): 
 
 ```bash
 ./example.py USW00014837
@@ -991,11 +993,34 @@ Here is where the Pelican integration with HTCondor comes into play.
 
 ### Scaling out with HTCondor and Pelican
 
+#### Generating a list
+
+For this example, we are going to analyze just a subset of our full list; the submit file will read in values from a file called `station_list.txt` with our chosen subset. 
+
+You can generate this list with
+
+```
+./generate_list.sh
+```
+
+
+#### Generating a submit file
+
+The included `partial-example.sub` demonstrates how to run the rudimentary climate analysis on 
+10 stations from the list generated above. 
+
+```bash
+cat partial-example.sub
+```
+
+This submit file has the outline of our list of jobs, but doesn't incorporate the data. Think about how and where you would add the data needed per job and then continue. 
+
+#### Adding Objects With Pelican
+
 HTCondor comes with built-in Pelican integration in the form of the Pelican Plugin. 
 That allows for Pelican URLs to be declared as part of HTCondor's file transfer mechanisms.
 
-Let's start by considering a single job that needs the `USW00014837.csv` file as an input.
-If the file is in the same directory as the submit file, you can declare that transfer using
+If a job file is in the same directory as the submit file, you can declare that transfer using
 
 ```
 transfer_input_files = USW00014837.csv
@@ -1017,15 +1042,13 @@ OSDF_PREFIX = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
 transfer_input_files = $(OSDF_PREFIX)/USW00014837.csv
 ```
 
-You can also pull out the unique station ID as it's own variable:
+And finally can also pull out the unique station ID as its own variable:
 
 ```
 OSDF_PREFIX = osdf:///aws-opendata/us-east-1/noaa-ghcn-pds/csv/by_station/
 STATION_ID = USW00014837
 transfer_input_files = $(OSDF_PREFIX)/$(STATION_ID).csv
 ```
-
-This is particularly useful since there are other files (the output image, standard output and standard error) where it is useful to have the station ID in the name.
 
 The last step needed is to make the station ID change for each job.
 To do so, the value of `STATION_ID` needs to loop over a list of values.
@@ -1047,32 +1070,6 @@ There are additional aspects to the submit file not covered here,
 but the important thing to understand is that each job will transfer its unique station data file and run the rudimentary analysis covered above.
 
 ### Submitting a list of jobs
-
-All we need to do at this point is make the list of station IDs to analyze.
-To keep things simple, we'll only do 10 stations, instead of all 130,000.
-
-Use the `generate_list.sh` script to generate such a list:
-
-```bash
-./generate_list.sh
-```
-
-This will create a file called `station_list.txt`.
-The station list should look like this:
-
-```
-$ cat station_list.txt
-USW00014837
-USW00014838
-USW00014839
-USW00014840
-USW00014841
-USW00014842
-USW00014843
-USW00014844
-USW00014845
-USW00014846
-```
 
 Now submit these jobs to HTCondor using the command
 
