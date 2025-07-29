@@ -9,8 +9,13 @@ Clients covered:
 * [HTCondor Plugin](https://htcondor.readthedocs.io/en/latest/users-manual/file-transfer.html#file-transfer-using-a-url)
 
 Accompanying Slides: 
+
+**Main**
 * Google slides: [go.wisc.edu/s79rt7](https://go.wisc.edu/s79rt7)
-* Github PDF: TBD
+* Github PDF: [pearc25_data-everywhere.pdf](pearc25_data-everywhere.pdf)
+
+**Authorization supplement**
+* Github PDF: [pearc25_sharing.pdf](pearc25_sharing.pdf)
 
 ## Outline
 
