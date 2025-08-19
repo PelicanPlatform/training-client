@@ -1,6 +1,6 @@
 # PEARC25 Pelican Client Tutorial
 
-This branch of the repository contains the materials that will be used for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"](https://pearc.acm.org/pearc25/workshops-and-tutorials/#half-day-AM-tutorial) of [PEARC25](https://pearc.acm.org/pearc25/), on July 21, 2025.
+This branch of the repository contains the materials that will be used for the session ["Data Everywhere: Using and Sharing Scientific Data with Pelican"]([https://pearc.acm.org/pearc25/workshops-and-tutorials/#half-day-AM-tutorial](https://web.cvent.com/event/6588dd1b-14b0-4459-b98d-7df1f0f003c3/websitePage:645d57e4-75eb-4769-b2c0-f201a0bfc6ce?session=a726d71d-33f9-4405-93df-ef7df8283a7f&shareLink=true)) of [PEARC25](https://pearc.acm.org/pearc25/), on July 21, 2025.
 
 Clients covered:
 
